@@ -62,7 +62,7 @@ const Header = () => {
     // Fetch services data
     const fetchServicesData = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/api/v1/services');
+            const response = await axios.get('https://sparlex.up.railway.app/api/v1/services');
             if (response.data.status === 'SUCCESS') {
                 setServicesData(response.data.data);
             }
@@ -201,7 +201,7 @@ const Header = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8080/api/v1/customer/login', {
+            const response = await axios.post('https://sparlex.up.railway.app/api/v1/customer/login', {
                 email,
                 password
             });
@@ -246,7 +246,7 @@ const Header = () => {
         e.preventDefault();
         setRegisterMessage('');
         try {
-            const response = await axios.post('http://localhost:8080/api/v1/customer/register', registerInfo);
+            const response = await axios.post('https://sparlex.up.railway.app/api/v1/customer/register', registerInfo);
             if (response.data.status === 'SUCCESS') {
                 setRegisterMessage('Đăng ký thành công! Vui lòng đăng nhập.');
                 setRegisterInfo({ fullName: '', email: '', password: '', phone: '', address: '' });
@@ -275,7 +275,7 @@ const Header = () => {
         setTimeout(() => {
             const token = localStorage.getItem('token');
             if (token) {
-                fetch('http://localhost:8080/api/v1/customer/logout', {
+                fetch('https://sparlex.up.railway.app/api/v1/customer/logout', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -465,7 +465,7 @@ const Header = () => {
                                                         userInfo.imageUrl
                                                             ? userInfo.imageUrl.startsWith('http')
                                                                 ? userInfo.imageUrl
-                                                                : `http://localhost:8080/${userInfo.imageUrl.replace(/^\/?/, '')}`
+                                                                : `https://sparlex.up.railway.app/${userInfo.imageUrl.replace(/^\/?/, '')}`
                                                             : "/assets/img/default-avatar.jpg"
                                                     }
                                                     alt="avatar"

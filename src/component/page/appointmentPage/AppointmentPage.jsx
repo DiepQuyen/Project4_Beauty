@@ -44,7 +44,7 @@ const AppointmentPage = () => {
 
     // Fetch services
     useEffect(() => {
-        axios.get('http://localhost:8080/api/v1/services')
+        axios.get('https://sparlex.up.railway.app/api/v1/services')
             .then(res => {
                 setServices(Array.isArray(res.data) ? res.data : res.data.data || []);
             })
@@ -53,7 +53,7 @@ const AppointmentPage = () => {
 
     // Fetch staff list and shuffle it
     useEffect(() => {
-        axios.get('http://localhost:8080/api/v1/user/accounts/staff')
+        axios.get('https://sparlex.up.railway.app/api/v1/user/accounts/staff')
             .then(res => {
                 const rawStaffList = Array.isArray(res.data) ? res.data : (res.data.data || []);
                 const processedStaff = rawStaffList.map(staff => ({
@@ -73,7 +73,7 @@ const AppointmentPage = () => {
 
     // Fetch time slots
     useEffect(() => {
-        axios.get('http://localhost:8080/api/v1/timeslot')
+        axios.get('https://sparlex.up.railway.app/api/v1/timeslot')
             .then(res => setTimeSlots(Array.isArray(res.data) ? res.data : res.data.data || []))
             .catch(() => setTimeSlots([]));
     }, []);
@@ -82,7 +82,7 @@ const AppointmentPage = () => {
     useEffect(() => {
         if (formData.appointmentDate && formData.serviceId && formData.timeSlotId) {
             const appointmentDates = formData.appointmentDate;
-            axios.get('http://localhost:8080/api/v1/timeslot/available', {
+            axios.get('https://sparlex.up.railway.app/api/v1/timeslot/available', {
                 params: {
                     date: appointmentDates,
                     serviceId: formData.serviceId,
@@ -127,7 +127,7 @@ const AppointmentPage = () => {
             const requestedDateTimeISO = localDateTimeForSlot.toISOString();
 
             const availabilityChecks = staffList.map(staff => {
-                return axios.get('http://localhost:8080/api/v1/booking/staff-availability', {
+                return axios.get('https://sparlex.up.railway.app/api/v1/booking/staff-availability', {
                     params: {
                         userId: staff.id,
                         requestedDateTime: requestedDateTimeISO,
@@ -242,7 +242,7 @@ const AppointmentPage = () => {
 
         if (!customerIdToSubmit && (formData.fullName && formData.phoneNumber)) {
             try {
-                const res = await axios.post('http://localhost:8080/api/v1/customer/guest-create', {
+                const res = await axios.post('https://sparlex.up.railway.app/api/v1/customer/guest-create', {
                     fullName: formData.fullName,
                     phone: formData.phoneNumber,
                 });
@@ -274,7 +274,7 @@ const AppointmentPage = () => {
         }
 
         try {
-            await axios.post('http://localhost:8080/api/v1/admin/appointment/create', submitData);
+            await axios.post('https://sparlex.up.railway.app/api/v1/admin/appointment/create', submitData);
             toast.success('Đặt lịch thành công!');
             setFormData(prev => ({
                 ...prev,

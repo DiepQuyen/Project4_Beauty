@@ -115,7 +115,7 @@ const StaffReviewPage = () => {
             // 🌐 Second: Try the admin API endpoint
             console.log('🔍 Staff not found in cache, trying admin API...');
             try {
-                const response = await axios.get(`http://localhost:8080/api/v1/admin/accounts/find-by-id/${staffId}`);
+                const response = await axios.get(`https://sparlex.up.railway.app/api/v1/admin/accounts/find-by-id/${staffId}`);
                 if (response.data && response.data.status === 'SUCCESS') {
                     console.log('✅ Found staff via admin API:', response.data.data.fullName);
                     setStaff(response.data.data); // ⚠️ Admin API wraps data in ResponseObject
@@ -127,7 +127,7 @@ const StaffReviewPage = () => {
 
             // 🔄 Third: Fallback to staff list API
             console.log('🔄 Trying staff list API...');
-            const fallbackResponse = await axios.get('http://localhost:8080/api/v1/user/accounts/staff');
+            const fallbackResponse = await axios.get('https://sparlex.up.railway.app/api/v1/user/accounts/staff');
             const staffList = Array.isArray(fallbackResponse.data)
                 ? fallbackResponse.data
                 : (fallbackResponse.data.data || []);
@@ -151,7 +151,7 @@ const StaffReviewPage = () => {
 
     const fetchStaffReviews = async (page = 0) => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/v1/reviews/item/${staffId}`, {
+            const response = await axios.get(`https://sparlex.up.railway.app/api/v1/reviews/item/${staffId}`, {
                 params: {
                     page: page,
                     size: reviewsPerPage,
@@ -255,7 +255,7 @@ const StaffReviewPage = () => {
             console.log('🚀 Submitting review:', payload);
             console.log('🔑 Using token:', token ? 'Available ✅' : 'Missing ❌');
 
-            const response = await axios.post('http://localhost:8080/api/v1/reviews', payload, {
+            const response = await axios.post('https://sparlex.up.railway.app/api/v1/reviews', payload, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`

@@ -74,7 +74,7 @@ const ServiceDetailPage = () => {
     // Hàm fetch chi tiết dịch vụ
     const fetchServiceDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/v1/services/${id}`);
+        const response = await fetch(`https://sparlex.up.railway.app/api/v1/services/${id}`);
         const result = await response.json();
         if (result.status === 'SUCCESS') {
           setService(result.data);
@@ -90,7 +90,7 @@ const ServiceDetailPage = () => {
     // Hàm fetch related services
     const fetchRelatedServices = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/v1/services');
+        const response = await fetch('https://sparlex.up.railway.app/api/v1/services');
         const result = await response.json();
         if (result.status === 'SUCCESS') {
           // Filter out current service and take first 6 services
@@ -105,7 +105,7 @@ const ServiceDetailPage = () => {
     // Hàm fetch danh sách review
     const fetchReviews = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/v1/reviews/item/${id}?sort=createdAt,desc`);
+        const response = await fetch(`https://sparlex.up.railway.app/api/v1/reviews/item/${id}?sort=createdAt,desc`);
         const result = await response.json();
         if (result.status === 'SUCCESS' && result.data.content) {
           setReviews(result.data.content);
@@ -136,7 +136,7 @@ const ServiceDetailPage = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/reviews/${reviewId}`, {
+      const response = await fetch(`https://sparlex.up.railway.app/api/v1/reviews/${reviewId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -199,7 +199,7 @@ const ServiceDetailPage = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/reviews/${reviewId}`, {
+      const response = await fetch(`https://sparlex.up.railway.app/api/v1/reviews/${reviewId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -283,7 +283,7 @@ const ServiceDetailPage = () => {
         'Authorization': `Bearer ${token}`
       };
 
-      const response = await fetch('http://localhost:8080/api/v1/reviews', {
+      const response = await fetch('https://sparlex.up.railway.app/api/v1/reviews', {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(payload),

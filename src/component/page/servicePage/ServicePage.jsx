@@ -107,7 +107,7 @@ const ServicePage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/v1/services');
+        const response = await fetch('https://sparlex.up.railway.app/api/v1/services');
         const result = await response.json();
         if (result.status === 'SUCCESS') {
           setServicesData(result.data);

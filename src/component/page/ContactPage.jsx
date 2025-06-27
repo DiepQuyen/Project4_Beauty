@@ -145,7 +145,7 @@ const ContactPage = () => {
             }
 
             const response = await axios.post(
-                'http://localhost:8080/api/v1/feedbacks/created',
+                'https://sparlex.up.railway.app/api/v1/feedbacks/created',
                 {
                     firstName: formData.firstName,
                     email: formData.email,

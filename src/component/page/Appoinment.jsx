@@ -90,7 +90,7 @@ const Appointment = () => {
 
     // Fetch services
     useEffect(() => {
-        axios.get('http://localhost:8080/api/v1/services')
+        axios.get('https://sparlex.up.railway.app/api/v1/services')
             .then(res => {
                 setServices(Array.isArray(res.data) ? res.data : res.data.data || []);
             })
@@ -99,7 +99,7 @@ const Appointment = () => {
 
     // Fetch time slots
     useEffect(() => {
-        axios.get('http://localhost:8080/api/v1/timeslot')
+        axios.get('https://sparlex.up.railway.app/api/v1/timeslot')
             .then(res => {
                 const allSlots = Array.isArray(res.data) ? res.data : res.data.data || [];
                 // Lọc chỉ những time slot có isActive là 1 hoặc true
@@ -125,7 +125,7 @@ const Appointment = () => {
 
             try {
                 // First, get all staff
-                let apiUrl = 'http://localhost:8080/api/v1/user/accounts/staff';
+                let apiUrl = 'https://sparlex.up.railway.app/api/v1/user/accounts/staff';
                 let params = {};
 
                 // Add service filter if service is selected
@@ -157,7 +157,7 @@ const Appointment = () => {
                 if (formData.appointmentDate && scheduleFiltering) {
                     setIsLoadingSchedules(true);
                     try {
-                        const scheduleResponse = await axios.get('http://localhost:8080/api/v1/users-schedules', {
+                        const scheduleResponse = await axios.get('https://sparlex.up.railway.app/api/v1/users-schedules', {
                             params: {
                                 startDate: formData.appointmentDate,
                                 endDate: formData.appointmentDate
@@ -275,7 +275,7 @@ const Appointment = () => {
             return;
         }
 
-        axios.get('http://localhost:8080/api/v1/timeslot/available', {
+        axios.get('https://sparlex.up.railway.app/api/v1/timeslot/available', {
             params: {
                 date: formData.appointmentDate,
                 serviceId: formData.serviceId,
@@ -318,7 +318,7 @@ const Appointment = () => {
             const requestedDateTimeISO = new Date(year, month - 1, day, slotHours, slotMinutes).toISOString();
 
             const availabilityChecks = staffList.map(staff =>
-                axios.get('http://localhost:8080/api/v1/booking/staff-availability', {
+                axios.get('https://sparlex.up.railway.app/api/v1/booking/staff-availability', {
                     params: {
                         userId: staff.id,
                         requestedDateTime: requestedDateTimeISO,
@@ -449,7 +449,7 @@ const Appointment = () => {
 
             if (!customerIdToSubmit && (formData.fullName && formData.phoneNumber)) {
                 try {
-                    const res = await axios.post('http://localhost:8080/api/v1/customers/guest-create', {
+                    const res = await axios.post('https://sparlex.up.railway.app/api/v1/customers/guest-create', {
                         fullName: formData.fullName,
                         phone: formData.phoneNumber,
                         email: formData.email,
@@ -488,7 +488,7 @@ const Appointment = () => {
                 return;
             }
 
-            await axios.post('http://localhost:8080/api/v1/admin/appointment/create', submitData);
+            await axios.post('https://sparlex.up.railway.app/api/v1/admin/appointment/create', submitData);
 
             // Hiển thị thông báo thành công với thời gian chờ
             toast.success('Đặt lịch thành công! Đang chuyển hướng...', {
@@ -731,7 +731,7 @@ const Appointment = () => {
 
         try {
             // Here you can send the cancel reason to backend if needed
-            // await axios.post('http://localhost:8080/api/v1/appointment/cancel', { reason: cancelReason });
+            // await axios.post('https://sparlex.up.railway.app/api/v1/appointment/cancel', { reason: cancelReason });
 
             toast.success(`Đã hủy đặt lịch thành công. Lý do: ${cancelReason}`);
 

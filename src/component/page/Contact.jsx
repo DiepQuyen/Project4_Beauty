@@ -174,7 +174,7 @@ const Contact = () => {
                 ...formData,
                 guestName: formData.firstName,
             };
-            const response = await axios.post('http://localhost:8080/api/v1/feedbacks/created', payload);
+            const response = await axios.post('https://sparlex.up.railway.app/api/v1/feedbacks/created', payload);
 
             if (response.data.status === 'SUCCESS') {
                 setStatusMessage('Tin nhắn của bạn đã được gửi thành công! Cảm ơn bạn.');

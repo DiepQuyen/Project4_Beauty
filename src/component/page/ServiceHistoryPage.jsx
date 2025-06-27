@@ -296,7 +296,7 @@ const ServiceHistoryPage = () => {
         setLookupPerformed(true);
 
         try {
-            const response = await axios.get(`http://localhost:8080/api/v1/admin/appointment/history/phone/${phoneNumber}`);
+            const response = await axios.get(`https://sparlex.up.railway.app/api/v1/admin/appointment/history/phone/${phoneNumber}`);
             if (response.data.status === 'SUCCESS' && response.data.data) {
                 const processedHistory = processHistoryData(response.data.data);
                 setHistory(processedHistory);
@@ -335,7 +335,7 @@ const ServiceHistoryPage = () => {
 
     const fetchCustomerStats = async (customerId) => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/v1/admin/appointment/stats/customer/${customerId}`);
+            const response = await axios.get(`https://sparlex.up.railway.app/api/v1/admin/appointment/stats/customer/${customerId}`);
             if (response.data.status === 'SUCCESS') {
                 setCustomerStats(response.data.data);
             }
@@ -456,7 +456,7 @@ const ServiceHistoryPage = () => {
         setError('');
         setLookupPerformed(true);
 
-        const apiUrl = `http://localhost:8080/api/v1/admin/appointment/history/customer/${customerId}`;
+        const apiUrl = `https://sparlex.up.railway.app/api/v1/admin/appointment/history/customer/${customerId}`;
         console.log('🌐 Making API call to:', apiUrl);
 
         try {
@@ -504,7 +504,7 @@ const ServiceHistoryPage = () => {
         setError('');
         setLookupPerformed(true);
         try {
-            const response = await axios.get(`http://localhost:8080/api/v1/admin/appointment/history/phone/${lookupIdentifier}`);
+            const response = await axios.get(`https://sparlex.up.railway.app/api/v1/admin/appointment/history/phone/${lookupIdentifier}`);
             if (response.data.status === 'SUCCESS' && response.data.data) {
                 const processedHistory = processHistoryData(response.data.data);
                 setHistory(processedHistory);
@@ -556,7 +556,7 @@ const ServiceHistoryPage = () => {
         setCancellingAppointments(prev => new Set(prev).add(cancelAppointmentId));
 
         try {
-            const response = await axios.put(`http://localhost:8080/api/v1/admin/appointment/${cancelAppointmentId}/cancel`, {
+            const response = await axios.put(`https://sparlex.up.railway.app/api/v1/admin/appointment/${cancelAppointmentId}/cancel`, {
                 reason: cancelReason
             });
 
@@ -637,7 +637,7 @@ const ServiceHistoryPage = () => {
             };
 
             // Gọi đến endpoint mới để tạo review cho cả service và staff, đính kèm token
-            await axios.post('http://localhost:8080/api/v1/reviews/service-and-staff', payload, config);
+            await axios.post('https://sparlex.up.railway.app/api/v1/reviews/service-and-staff', payload, config);
 
             toast.success("Cảm ơn bạn đã gửi đánh giá!");
             handleCloseReviewModal();

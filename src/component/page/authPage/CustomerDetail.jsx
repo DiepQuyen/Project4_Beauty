@@ -65,7 +65,7 @@ const CustomerDetail = () => {
 
     const fetchUserDetails = async (userId, token) => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/v1/customer/detail/${userId}`, {
+            const response = await axios.get(`https://sparlex.up.railway.app/api/v1/customer/detail/${userId}`, {
                 headers: { 'Authorization': `Bearer ${token}` },
                 timeout: 10000
             });
@@ -88,7 +88,7 @@ const CustomerDetail = () => {
 
     const fetchServiceHistory = async (customerId, token) => {
         try {
-            const response = await axios.get(`http://localhost:8080/api/v1/serviceHistory/customer/${customerId}`, {
+            const response = await axios.get(`https://sparlex.up.railway.app/api/v1/serviceHistory/customer/${customerId}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             setServiceHistory(response.data.data || []);
@@ -133,7 +133,7 @@ const CustomerDetail = () => {
                 formData.append('file', userInfo.imageFile);
             }
             const response = await axios.put(
-                `http://localhost:8080/api/v1/customer/update-info/${user.id}`,
+                `https://sparlex.up.railway.app/api/v1/customer/update-info/${user.id}`,
                 formData,
                 { headers: { 'Authorization': `Bearer ${user.token}` } }
             );
@@ -167,7 +167,7 @@ const CustomerDetail = () => {
 
         try {
             const response = await axios.put(
-                `http://localhost:8080/api/v1/customer/change-password/${user.id}`,
+                `https://sparlex.up.railway.app/api/v1/customer/change-password/${user.id}`,
                 passwordInfo,
                 { headers: { 'Authorization': `Bearer ${user.token}` } }
             );
@@ -199,7 +199,7 @@ const CustomerDetail = () => {
         // Call logout API in background after redirect (fire and forget)
         setTimeout(() => {
             if (user.token) {
-                fetch('http://localhost:8080/api/v1/customer/logout', {
+                fetch('https://sparlex.up.railway.app/api/v1/customer/logout', {
                     method: 'POST',
                     headers: { 
                         'Authorization': `Bearer ${user.token}`,
@@ -260,7 +260,7 @@ const CustomerDetail = () => {
                                             userInfo.imageUrl
                                                 ? userInfo.imageUrl.startsWith('http')
                                                     ? userInfo.imageUrl
-                                                    : `http://localhost:8080/${userInfo.imageUrl.replace(/^\/?/, '')}`
+                                                    : `https://sparlex.up.railway.app/${userInfo.imageUrl.replace(/^\/?/, '')}`
                                                 : "/assets/img/default-avatar.jpg"
                                         )
                                     }
