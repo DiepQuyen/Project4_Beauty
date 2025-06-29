@@ -6,14 +6,14 @@ import axios from 'axios';
 const useAuth = () => {
     const [authInfo, setAuthInfo] = useState(() => {
         try {
-            const userString = localStorage.getItem('user');
+            const userString = localStorage.getItem('userInfo');
             const token = localStorage.getItem('token');
             if (userString && token) {
                 return { isAuthenticated: true, user: JSON.parse(userString), token };
             }
         } catch (error) {
             console.error("Failed to parse user data from localStorage", error);
-            localStorage.removeItem('user');
+            localStorage.removeItem('userInfo');
             localStorage.removeItem('token');
         }
         return { isAuthenticated: false, user: null, token: null };
@@ -32,6 +32,20 @@ const Contact = () => {
         subject: '',
         message: ''
     });
+
+    // Lấy thông tin người dùng khi component được mount
+    useEffect(() => {
+        const storedUser = localStorage.getItem('userInfo');
+        if (storedUser) {
+            const userData = JSON.parse(storedUser);
+            setFormData(prev => ({
+                ...prev,
+                firstName: userData.fullName || '',
+                email: userData.email || '',
+                phone: userData.phone || ''
+            }));
+        }
+    }, []);
 
     const [errors, setErrors] = useState({});
     const [statusMessage, setStatusMessage] = useState('');
@@ -54,10 +68,11 @@ const Contact = () => {
         return '';
     };
 
+    // Phone validation
     const validatePhone = (phone) => {
         if (!phone.trim()) return 'Số điện thoại không được để trống';
         // Chỉ cho phép số và các ký tự +, -, (, ), space
-        const phoneRegex = /^[\d\s\-\+\(\)]+$/;
+        const phoneRegex = /^[0-9\s+()-]+$/;
         if (!phoneRegex.test(phone.trim())) return 'Số điện thoại chỉ được chứa số và các ký tự +, -, (, )';
         // Loại bỏ các ký tự không phải số để kiểm tra độ dài
         const digitsOnly = phone.replace(/\D/g, '');
@@ -131,7 +146,7 @@ const Contact = () => {
         let formattedValue = value;
         if (name === 'phone') {
             // Chỉ cho phép số và một số ký tự đặc biệt
-            formattedValue = value.replace(/[^0-9\s\-\+\(\)]/g, '');
+            formattedValue = value.replace(/[^0-9\s+()-]/g, '');
         }
 
         setFormData(prevData => ({
@@ -174,7 +189,7 @@ const Contact = () => {
                 ...formData,
                 guestName: formData.firstName,
             };
-            const response = await axios.post('https://sparlex.up.railway.app/api/v1/feedbacks/created', payload);
+            const response = await axios.post('https://sparlex-spa.up.railway.app/api/v1/feedbacks/created', payload);
 
             if (response.data.status === 'SUCCESS') {
                 setStatusMessage('Tin nhắn của bạn đã được gửi thành công! Cảm ơn bạn.');
@@ -319,7 +334,7 @@ const Contact = () => {
                                             style={{
                                                 background: 'linear-gradient(135deg, #fdb5b9 0%, #fecaca 50%)',
                                                 border: 'none',
-                                                color: 'white',
+                                                color: 'black',
                                                 fontWeight: '600',
                                                 borderRadius: '25px',
                                                 transition: 'all 0.3s ease',
@@ -327,7 +342,7 @@ const Contact = () => {
                                             }}
                                             onMouseEnter={(e) => {
                                                 if (!e.target.disabled) {
-                                                    e.target.style.background = 'linear-gradient(135deg, #F7A8B8, #E589A3)';
+                                                    e.target.style.background = 'linear-gradient(135deg,rgb(255, 172, 176),rgb(250, 144, 149))';
                                                     e.target.style.transform = 'translateY(-2px)';
                                                 }
                                             }}
@@ -370,7 +385,8 @@ const Contact = () => {
                                     marginBottom: '-6px',
                                     filter: 'brightness(1.1) contrast(1.1) saturate(1.2)',
                                 }}
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.324408746655!2d106.69749831533343!3d10.78231859230824!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f38f9ed887b%3A0x14aded5703768989!2zQsOgaSBYw6AgRHXDom4gQ2jDrG0!5e0!3m2!1svi!2s!4v1645678901234!5m2!1svi!2s"
+                                title="Beauty Spa Location Map"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.6703376889236!2d105.83851277531139!3d21.00584778063775!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ac778d04e3e1%3A0xd211a8690f6ae0d1!2zMjIgxJAuIEdp4bqjaSBQaMOzbmcsIFBoxrDGoW5nIE1haSwgxJDhu5FuZyDEkGEsIEjDoCBO4buZaSwgVmlldG5hbQ!5e0!3m2!1sen!2s!4v1751101490103!5m2!1sen!2s"
                                 loading="lazy"
                                 referrerPolicy="no-referrer-when-downgrade"
                             />
@@ -382,10 +398,10 @@ const Contact = () => {
                                 Theo dõi chúng tôi
                             </h4>
                             <div className="d-flex align-items-center justify-content-center">
-                                <a href="#" className="btn btn-light btn-square rounded-circle me-3 shadow-sm" style={{ transform: 'scale(1)', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'} onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}><i className="fab fa-facebook-f" /></a>
-                                <a href="#" className="btn btn-light btn-square rounded-circle me-3 shadow-sm" style={{ transform: 'scale(1)', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'} onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}><i className="fab fa-twitter" /></a>
-                                <a href="#" className="btn btn-light btn-square rounded-circle me-3 shadow-sm" style={{ transform: 'scale(1)', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'} onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}><i className="fab fa-instagram" /></a>
-                                <a href="#" className="btn btn-light btn-square rounded-circle shadow-sm" style={{ transform: 'scale(1)', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'} onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}><i className="fab fa-linkedin-in" /></a>
+                                <button className="btn btn-light btn-square rounded-circle me-3 shadow-sm" style={{ transform: 'scale(1)', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'} onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}><i className="fab fa-facebook-f" /></button>
+                                <button className="btn btn-light btn-square rounded-circle me-3 shadow-sm" style={{ transform: 'scale(1)', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'} onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}><i className="fab fa-twitter" /></button>
+                                <button className="btn btn-light btn-square rounded-circle me-3 shadow-sm" style={{ transform: 'scale(1)', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'} onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}><i className="fab fa-instagram" /></button>
+                                <button className="btn btn-light btn-square rounded-circle shadow-sm" style={{ transform: 'scale(1)', transition: 'all 0.3s ease' }} onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'} onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}><i className="fab fa-linkedin-in" /></button>
                             </div>
                         </div>
                     </div>

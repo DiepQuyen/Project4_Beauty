@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import sessionManager from '../../utils/sessionManager';
 import SessionTimer from './SessionTimer';
+import {toast} from "react-toastify";
 
 const Header = () => {
     // Khởi tạo hook useNavigate và useLocation
@@ -62,7 +63,7 @@ const Header = () => {
     // Fetch services data
     const fetchServicesData = async () => {
         try {
-            const response = await axios.get('https://sparlex.up.railway.app/api/v1/services');
+            const response = await axios.get('https://sparlex-spa.up.railway.app/api/v1/services');
             if (response.data.status === 'SUCCESS') {
                 setServicesData(response.data.data);
             }
@@ -201,7 +202,7 @@ const Header = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('https://sparlex.up.railway.app/api/v1/customer/login', {
+            const response = await axios.post('https://sparlex-spa.up.railway.app/api/v1/customer/login', {
                 email,
                 password
             });
@@ -211,7 +212,8 @@ const Header = () => {
                 let token = responseData.data.token;
 
                 if (!token || token.split('.').length !== 3) {
-                    alert('Token không hợp lệ từ server!');
+                    toast.error('Token không hợp lệ từ server!');
+
                     return;
                 }
                 token = token.trim();
@@ -225,13 +227,30 @@ const Header = () => {
                 // Kích hoạt session manager khi đăng nhập thành công
                 sessionManager.onUserLogin();
 
-                // Dùng window.location.href để tải lại toàn bộ trang, cập nhật trạng thái login
-                window.location.href = "/CustomerDetail";
+                // Cập nhật state userInfo ngay lập tức
+                setUserInfo({
+                    ...customerData,
+                    token: token
+                });
 
+                // Clear form
+                setEmail('');
+                setPassword('');
+
+                // Đóng modal
+                const modalElement = document.getElementById('loginModal');
+                const modal = window.bootstrap.Modal.getInstance(modalElement);
+                if (modal) {
+                    modal.hide();
+                }
+
+                // Trigger sự kiện để các component khác cập nhật
+                window.dispatchEvent(new CustomEvent('userInfoUpdated'));
+                // window.location.href = '/CustomerDetail';
             }
         } catch (error) {
             console.error('Error logging in:', error);
-            alert('Email hoặc mật khẩu không chính xác!');
+            toast.error('Email hoặc mật khẩu không chính xác!');
         }
     };
 
@@ -246,7 +265,7 @@ const Header = () => {
         e.preventDefault();
         setRegisterMessage('');
         try {
-            const response = await axios.post('https://sparlex.up.railway.app/api/v1/customer/register', registerInfo);
+            const response = await axios.post('https://sparlex-spa.up.railway.app/api/v1/customer/register', registerInfo);
             if (response.data.status === 'SUCCESS') {
                 setRegisterMessage('Đăng ký thành công! Vui lòng đăng nhập.');
                 setRegisterInfo({ fullName: '', email: '', password: '', phone: '', address: '' });
@@ -275,7 +294,7 @@ const Header = () => {
         setTimeout(() => {
             const token = localStorage.getItem('token');
             if (token) {
-                fetch('https://sparlex.up.railway.app/api/v1/customer/logout', {
+                fetch('https://sparlex-spa.up.railway.app/api/v1/customer/logout', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -298,7 +317,7 @@ const Header = () => {
                             <div className="col-lg-8">
                                 <div className="d-flex flex-wrap">
                                     <a href="#" className="me-4"><i className="fas fa-map-marker-alt me-2" />Tìm Địa Điểm</a>
-                                    <a href="#" className="me-4"><i className="fas fa-phone-alt me-2" />+01234567890</a>
+                                    <a href="#" className="me-4"><i className="fas fa-phone-alt me-2" />(+84) 3668888940</a>
                                     <a href="#"><i className="fas fa-envelope me-2" />info@sparlex.com</a>
                                 </div>
                             </div>
@@ -372,32 +391,34 @@ const Header = () => {
                                 </div>
                                 <div className="d-flex align-items-center flex-nowrap pt-xl-0">
                                     <button className="btn-search btn btn-primary  rounded-circle btn-lg-square"
-                                            onClick={() => setShowSearch(!showSearch)}
-                                            onMouseLeave={(e) => {
-                                                e.target.style.background = '#FDB5B9';
-                                                e.target.style.color = 'white';
-                                                e.target.style.boxShadow = '0 2px 6px rgba(253, 181, 185, 0.3)';
-                                                // Đảm bảo icon hiển thị
-                                                const icon = e.target.querySelector('i');
-                                                if (icon) {
-                                                    icon.style.color = 'white';
-                                                    icon.style.background = 'transparent';
-                                                };
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                e.target.style.background = 'transparent';
-                                                e.target.style.color = '#FDB5B9';
-                                                e.target.style.boxShadow = 'none';
-                                                e.target.style.border = '2px solid #FDB5B9';
-                                                // Khôi phục màu icon
-                                                const icon = e.target.querySelector('i');
-                                                if (icon) {
-                                                    icon.style.color = '#FDB5B9';
-                                                    icon.style.background = 'transparent';
-                                                }
-                                            }}
-                                            style={{background: '#FDB5B9', color: 'white', border: '2px solid #FDB5B9', padding: '10px 15px', transition: 'all 0.3s ease', width: "50px",
-                                                height: "50px"}}
+                                        onClick={() => setShowSearch(!showSearch)}
+                                        onMouseLeave={(e) => {
+                                            e.target.style.background = '#FDB5B9';
+                                            e.target.style.color = 'white';
+                                            e.target.style.boxShadow = '0 2px 6px rgba(253, 181, 185, 0.3)';
+                                            // Đảm bảo icon hiển thị
+                                            const icon = e.target.querySelector('i');
+                                            if (icon) {
+                                                icon.style.color = 'white';
+                                                icon.style.background = 'transparent';
+                                            };
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.target.style.background = 'transparent';
+                                            e.target.style.color = '#FDB5B9';
+                                            e.target.style.boxShadow = 'none';
+                                            e.target.style.border = '2px solid #FDB5B9';
+                                            // Khôi phục màu icon
+                                            const icon = e.target.querySelector('i');
+                                            if (icon) {
+                                                icon.style.color = '#FDB5B9';
+                                                icon.style.background = 'transparent';
+                                            }
+                                        }}
+                                        style={{
+                                            background: '#FDB5B9', color: 'white', border: '2px solid #FDB5B9', padding: '10px 15px', transition: 'all 0.3s ease', width: "50px",
+                                            height: "50px"
+                                        }}
                                     >
                                         <i className="fas fa-search" />
                                     </button>
@@ -437,7 +458,7 @@ const Header = () => {
                                                 }
                                             }}
                                         >
-                                            <i className="fas fa-user me-2" style={{ background: "transparent"}}></i>
+                                            <i className="fas fa-user me-2" style={{ background: "transparent" }}></i>
                                             Đăng Nhập
                                         </button>
                                     ) : (
@@ -465,7 +486,7 @@ const Header = () => {
                                                         userInfo.imageUrl
                                                             ? userInfo.imageUrl.startsWith('http')
                                                                 ? userInfo.imageUrl
-                                                                : `https://sparlex.up.railway.app/${userInfo.imageUrl.replace(/^\/?/, '')}`
+                                                                : `https://sparlex-spa.up.railway.app/${userInfo.imageUrl.replace(/^\/?/, '')}`
                                                             : "/assets/img/default-avatar.jpg"
                                                     }
                                                     alt="avatar"
@@ -498,8 +519,8 @@ const Header = () => {
             {/* Search functionality */}
             {showSearch && (
                 <div ref={searchRef} className="search-bar-wrapper position-absolute w-100 d-flex justify-content-center" style={{ top: "170px", zIndex: 1050 }}>
-                    <div className="position-relative" style={{ maxWidth: "600px", width: "100%" }}>
-                        <div className="input-group shadow">
+                    <div className="position-relative " style={{ maxWidth: "600px", width: "100%" }}>
+                        <div className="input-group shadow rounded-pill">
                             <input
                                 type="search"
                                 className="form-control p-3"

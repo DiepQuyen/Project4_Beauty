@@ -94,7 +94,7 @@ const StarRating = ({ rating, setRating, disabled = false }) => (
         {[1, 2, 3, 4, 5].map((star) => (
             <i
                 key={star}
-                className={`fas fa-star ${star <= rating ? 'text-warning' : 'text-light'}`}
+                className={`fas fa-star ${star <= rating ? 'text-warning' : 'star-light'}`}
                 style={{
                     cursor: disabled ? 'default' : 'pointer',
                     fontSize: '1.75rem',
@@ -296,7 +296,7 @@ const ServiceHistoryPage = () => {
         setLookupPerformed(true);
 
         try {
-            const response = await axios.get(`https://sparlex.up.railway.app/api/v1/admin/appointment/history/phone/${phoneNumber}`);
+            const response = await axios.get(`https://sparlex-spa.up.railway.app/api/v1/admin/appointment/history/phone/${phoneNumber}`);
             if (response.data.status === 'SUCCESS' && response.data.data) {
                 const processedHistory = processHistoryData(response.data.data);
                 setHistory(processedHistory);
@@ -335,7 +335,7 @@ const ServiceHistoryPage = () => {
 
     const fetchCustomerStats = async (customerId) => {
         try {
-            const response = await axios.get(`https://sparlex.up.railway.app/api/v1/admin/appointment/stats/customer/${customerId}`);
+            const response = await axios.get(`https://sparlex-spa.up.railway.app/api/v1/admin/appointment/stats/customer/${customerId}`);
             if (response.data.status === 'SUCCESS') {
                 setCustomerStats(response.data.data);
             }
@@ -456,7 +456,7 @@ const ServiceHistoryPage = () => {
         setError('');
         setLookupPerformed(true);
 
-        const apiUrl = `https://sparlex.up.railway.app/api/v1/admin/appointment/history/customer/${customerId}`;
+        const apiUrl = `https://sparlex-spa.up.railway.app/api/v1/admin/appointment/history/customer/${customerId}`;
         console.log('🌐 Making API call to:', apiUrl);
 
         try {
@@ -504,7 +504,7 @@ const ServiceHistoryPage = () => {
         setError('');
         setLookupPerformed(true);
         try {
-            const response = await axios.get(`https://sparlex.up.railway.app/api/v1/admin/appointment/history/phone/${lookupIdentifier}`);
+            const response = await axios.get(`https://sparlex-spa.up.railway.app/api/v1/admin/appointment/history/phone/${lookupIdentifier}`);
             if (response.data.status === 'SUCCESS' && response.data.data) {
                 const processedHistory = processHistoryData(response.data.data);
                 setHistory(processedHistory);
@@ -556,7 +556,7 @@ const ServiceHistoryPage = () => {
         setCancellingAppointments(prev => new Set(prev).add(cancelAppointmentId));
 
         try {
-            const response = await axios.put(`https://sparlex.up.railway.app/api/v1/admin/appointment/${cancelAppointmentId}/cancel`, {
+            const response = await axios.put(`https://sparlex-spa.up.railway.app/api/v1/admin/appointment/${cancelAppointmentId}/cancel`, {
                 reason: cancelReason
             });
 
@@ -637,7 +637,7 @@ const ServiceHistoryPage = () => {
             };
 
             // Gọi đến endpoint mới để tạo review cho cả service và staff, đính kèm token
-            await axios.post('https://sparlex.up.railway.app/api/v1/reviews/service-and-staff', payload, config);
+            await axios.post('https://sparlex-spa.up.railway.app/api/v1/reviews/service-and-staff', payload, config);
 
             toast.success("Cảm ơn bạn đã gửi đánh giá!");
             handleCloseReviewModal();
@@ -820,8 +820,7 @@ const ServiceHistoryPage = () => {
             <table className="table table-hover mb-0">
                 <thead style={{ backgroundColor: '#f8f9fa' }}>
                     <tr>
-                        <th scope="col" className="py-3 border-0" style={{ fontSize: '0.9rem', fontWeight: '600', color: '#495057' }}>
-                            <i className="fas fa-hashtag me-2"></i>STT
+                        <th scope="col" className="py-3 border-0" style={{ fontSize: '0.9rem', fontWeight: '600', color: '#495057' }}>STT
                         </th>
                         <th scope="col" className="py-3 border-0" style={{ fontSize: '0.9rem', fontWeight: '600', color: '#495057' }}>
                             <i className="fas fa-spa me-2"></i>Dịch Vụ
@@ -852,7 +851,7 @@ const ServiceHistoryPage = () => {
                         const isCancellable = canCancelAppointment(item);
                         const isCompleted = statusInfo.text === 'Đã hoàn thành';
                         // Giả sử có trường isReviewed từ backend để biết đã đánh giá hay chưa
-                        const isReviewed = item.isReviewed === true;
+                        const isReviewed = item.isFeedBack === true;
 
                         return (
                             <tr key={item.id} style={{ borderLeft: `4px solid ${index % 2 === 0 ? '#007bff' : '#28a745'}` }}>
@@ -867,7 +866,8 @@ const ServiceHistoryPage = () => {
                                         </div>
                                         <div>
                                             <div className="fw-bold text-primary">{item.serviceName}</div>
-                                            <small className="text-muted">Mã dịch vụ: #{item.serviceId}</small>
+                                            <small className="text-muted">Mã lịch hẹn: #{item.appointmentId}</small>
+                                            {/* <small className="text-muted">Mã dịch vụ: #{item.serviceId}</small> */}
                                         </div>
                                     </div>
                                 </td>
@@ -896,8 +896,7 @@ const ServiceHistoryPage = () => {
                                 </td>
                                 <td className="py-3 align-middle">
                                     <div>
-                                        <div className="fw-bold text-info">{item.userName}</div>
-                                        <small className="text-muted">Mã lịch hẹn: #{item.appointmentId}</small>
+                                        <div className="fw-bold text-info">{item.userName}</div>                                      
                                     </div>
                                 </td>
                                 <td className="py-3 align-middle">
@@ -1037,7 +1036,7 @@ const ServiceHistoryPage = () => {
                                 ? 'Đây là danh sách lịch hẹn và dịch vụ của bạn tại spa của chúng tôi.'
                                 : 'Tra cứu lịch hẹn bằng số điện thoại (dành cho khách chưa đăng nhập).'}
                         </p>
-                        {userInfo && (
+                        {/* {userInfo && (
                             <div className="alert alert-info" role="alert">
                                 <i className="fas fa-info-circle me-2"></i>
                                 <strong>Lưu ý:</strong> Bạn có thể hủy các lịch hẹn sắp tới bằng cách nhấn nút "Hủy Lịch" trong bảng bên dưới.
@@ -1048,7 +1047,7 @@ const ServiceHistoryPage = () => {
                                     Chỉ hiển thị lịch hẹn hợp lệ (có giá tiền lớn hơn 0, tên dịch vụ và nhân viên không phải N/A).
                                 </small>
                             </div>
-                        )}
+                        )} */}
 
 
                         {/* Thông báo tự động tra cứu */}
@@ -1220,7 +1219,7 @@ const ServiceHistoryPage = () => {
                                                 <small style={{ color: '#6c757d' }}>
                                                     Cần hỗ trợ? Gọi hotline:
                                                     <a href="tel:1900xxxx" className="text-decoration-none ms-1" style={{ color: '#FDB5B9', fontWeight: '600' }}>
-                                                        1900-xxxx
+                                                        0366888894
                                                     </a>
                                                 </small>
                                             </div>
@@ -1298,7 +1297,7 @@ const ServiceHistoryPage = () => {
                                             Thử lại
                                         </button>
                                         <small className="text-muted">
-                                            Hoặc liên hệ <strong>hotline: 1900-xxxx</strong> để hỗ trợ
+                                            Hoặc liên hệ <strong>hotline: 0366888894</strong> để được hỗ trợ
                                         </small>
                                     </div>
                                 </div>
@@ -1455,97 +1454,178 @@ const ServiceHistoryPage = () => {
                 </div>
             </div>
 
-            {/* Review Modal */}
-            {showReviewModal && reviewingAppointment && (
-                 <div className="modal-overlay" style={{
-                    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                    backgroundColor: 'rgba(0, 0, 0, 0.6)', display: 'flex',
-                    alignItems: 'center', justifyContent: 'center', zIndex: 1050
-                }}>
-                    <div className="modal-content" style={{
-                        background: '#ffffff', borderRadius: '12px', padding: '1.5rem',
-                        width: '90%', maxWidth: '480px',
-                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
-                        animation: 'slideInUp 0.3s ease-out'
-                    }}>
-                        <div className="modal-header border-0 text-center d-block mb-2">
-                            <h4 className="modal-title fw-bold" style={{ color: '#8B4513' }}>Đánh Giá Chất Lượng</h4>
-                            <button type="button" className="btn-close" onClick={handleCloseReviewModal} style={{position: 'absolute', top: '1rem', right: '1rem'}}></button>
-                        </div>
-                        <div className="modal-body px-0 py-2">
-                            <div className="mb-3 p-3 bg-light rounded-3" style={{border: '1px solid #eee'}}>
-                                <div className="d-flex align-items-center mb-2">
-                                    <i className="fas fa-cut me-3 text-danger" style={{fontSize: '1.2rem'}}></i>
-                                    <span className="fw-bold me-2">Dịch vụ:</span>
-                                    <span className="text-muted">{reviewingAppointment.serviceName}</span>
+                        {showReviewModal && reviewingAppointment && (
+                             <div className="modal-overlay" style={{
+                                position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                                backgroundColor: 'rgba(0, 0, 0, 0.7)', display: 'flex',
+                                alignItems: 'center', justifyContent: 'center', zIndex: 1050,
+                                backdropFilter: 'blur(5px)'
+                            }}>
+                                <div className="modal-content" style={{
+                                    background: 'linear-gradient(to bottom right, #ffffff, #f8f9fa)',
+                                    borderRadius: '16px',
+                                    padding: '1rem',
+                                    width: '95%',
+                                    maxWidth: '520px',
+                                    boxShadow: '0 15px 35px rgba(0, 0, 0, 0.15)',
+                                    animation: 'fadeInUp 0.4s ease-out',
+                                    border: '1px solid rgba(255,255,255,0.18)'
+                                }}>
+                                    <div className="modal-header border-0 text-center d-block mb-4">
+                                        <h4 className="modal-title" style={{ 
+                                            background: 'linear-gradient(45deg, #8B4513, #e83e8c)',
+                                            WebkitBackgroundClip: 'text',
+                                            WebkitTextFillColor: 'transparent',
+                                            fontWeight: '700',
+                                            fontSize: '1.8rem',
+                                            marginBottom: '0.5rem'
+                                        }}>Đánh Giá Chất Lượng</h4>
+                                        <button 
+                                            type="button" 
+                                            className="btn-close" 
+                                            onClick={handleCloseReviewModal} 
+                                            style={{
+                                                position: 'absolute', 
+                                                top: '1.5rem', 
+                                                right: '1.5rem',
+                                                transition: 'transform 0.2s',
+                                                ':hover': {
+                                                    transform: 'rotate(90deg)'
+                                                }
+                                            }}
+                                        ></button>
+                                    </div>
+                                    <div className="modal-body px-0 py-2">
+                                        <div className="mb-4 p-4" style={{
+                                            background: 'rgba(255,255,255,0.9)',
+                                            borderRadius: '12px',
+                                            boxShadow: '0 4px 15px rgba(0,0,0,0.05)'
+                                        }}>
+                                            <div className="d-flex align-items-center mb-3">
+                                                <div className="icon-circle me-3" style={{
+                                                    background: 'linear-gradient(45deg, #ff6b6b, #e83e8c)',
+                                                    borderRadius: '50%',
+                                                    width: '40px',
+                                                    height: '40px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center'
+                                                }}>
+                                                    <i className="fas fa-cut text-white" style={{fontSize: '1.1rem'}}></i>
+                                                </div>
+                                                <div>
+                                                    <span className="text-muted" style={{fontSize: '0.9rem'}}>Dịch vụ</span>
+                                                    <div className="fw-bold" style={{color: '#2d3436'}}>{reviewingAppointment.serviceName}</div>
+                                                </div>
+                                            </div>
+                                            <div className="d-flex align-items-center">
+                                                <div className="icon-circle me-3" style={{
+                                                    background: 'linear-gradient(45deg, #6c5ce7, #a8a4e6)',
+                                                    borderRadius: '50%',
+                                                    width: '40px',
+                                                    height: '40px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center'
+                                                }}>
+                                                    <i className="fas fa-user-tie text-white" style={{fontSize: '1.1rem'}}></i>
+                                                </div>
+                                                <div>
+                                                    <span className="text-muted" style={{fontSize: '0.9rem'}}>Stylist</span>
+                                                    <div className="fw-bold" style={{color: '#2d3436'}}>{reviewingAppointment.userName}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="mb-3 text-center">
+                                            <label className="form-label fw-bold mb-2">Xếp hạng dịch vụ</label>
+                                            <StarRating
+                                                rating={reviewData.serviceRating}
+                                                setRating={(rating) => setReviewData(prev => ({ ...prev, serviceRating: rating }))}
+                                            />
+                                        </div>
+
+                                        <div className="mb-4 text-center">
+                                            <label className="form-label fw-bold mb-2">Xếp hạng nhân viên</label>
+                                            <StarRating
+                                                rating={reviewData.staffRating}
+                                                setRating={(rating) => setReviewData(prev => ({ ...prev, staffRating: rating }))}
+                                            />
+                                        </div>
+
+                                        <div className="mb-3">
+                                            <label htmlFor="reviewComment" className="form-label fw-bold">Bình luận (tùy chọn)</label>
+                                            <textarea
+                                                id="reviewComment"
+                                                className="form-control"
+                                                rows="3"
+                                                placeholder="Chia sẻ cảm nhận của bạn về dịch vụ..."
+                                                value={reviewData.comment}
+                                                onChange={(e) => setReviewData(prev => ({ ...prev, comment: e.target.value }))}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="modal-footer border-0 d-flex justify-content-end gap-2">
+                                        <button
+                                            type="button"
+                                            className="btn btn-secondary"
+                                            onClick={handleCloseReviewModal}
+                                            disabled={isSubmittingReview}
+                                            style={{
+                                                backgroundColor: '#6c757d', 
+                                                borderColor: '#6c757d',
+                                                transition: 'all 0.3s ease'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.target.style.backgroundColor = '#5a6268';
+                                                e.target.style.borderColor = '#5a6268';
+                                                e.target.style.transform = 'translateY(-2px)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.backgroundColor = '#6c757d';
+                                                e.target.style.borderColor = '#6c757d';
+                                                e.target.style.transform = 'translateY(0)';
+                                            }}
+                                        >
+                                            <i className="fas fa-times me-2"></i>Hủy
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn"
+                                            onClick={handleSubmitReview}
+                                            disabled={isSubmittingReview || (reviewData.serviceRating === 0 && reviewData.staffRating === 0)}
+                                            style={{
+                                                backgroundColor: 'rgb(252, 177, 181)', 
+                                                color: 'white', 
+                                                borderColor: 'rgb(252, 177, 181)',
+                                                transition: 'all 0.3s ease'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.target.style.backgroundColor = 'rgb(255, 135, 151)';
+                                                e.target.style.borderColor = 'rgb(255, 135, 151)';
+                                                e.target.style.transform = 'translateY(-2px)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.backgroundColor = 'rgb(255, 158, 163)';
+                                                e.target.style.borderColor = 'rgb(255, 158, 163)';
+                                                e.target.style.transform = 'translateY(0)';
+                                            }}
+                                        >
+                                            {isSubmittingReview ? (
+                                                <>
+                                                    <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                                    Đang gửi...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <i className="fas fa-paper-plane me-2"></i>Gửi đánh giá
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="d-flex align-items-center">
-                                    <i className="fas fa-user-tie me-3 text-danger" style={{fontSize: '1.2rem'}}></i>
-                                    <span className="fw-bold me-2">Stylist:</span>
-                                    <span className="text-muted">{reviewingAppointment.userName}</span>
-                                </div>
                             </div>
-
-                            <div className="mb-3 text-center">
-                                <label className="form-label fw-bold mb-2">Xếp hạng dịch vụ</label>
-                                <StarRating
-                                    rating={reviewData.serviceRating}
-                                    setRating={(rating) => setReviewData(prev => ({ ...prev, serviceRating: rating }))}
-                                />
-                            </div>
-
-                            <div className="mb-4 text-center">
-                                <label className="form-label fw-bold mb-2">Xếp hạng nhân viên</label>
-                                <StarRating
-                                    rating={reviewData.staffRating}
-                                    setRating={(rating) => setReviewData(prev => ({ ...prev, staffRating: rating }))}
-                                />
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="reviewComment" className="form-label fw-bold">Bình luận (tùy chọn)</label>
-                                <textarea
-                                    id="reviewComment"
-                                    className="form-control"
-                                    rows="3"
-                                    placeholder="Chia sẻ cảm nhận của bạn về dịch vụ..."
-                                    value={reviewData.comment}
-                                    onChange={(e) => setReviewData(prev => ({ ...prev, comment: e.target.value }))}
-                                />
-                            </div>
-                        </div>
-                        <div className="modal-footer border-0 d-flex justify-content-end gap-2">
-                            <button
-                                type="button"
-                                className="btn btn-secondary"
-                                onClick={handleCloseReviewModal}
-                                disabled={isSubmittingReview}
-                                style={{backgroundColor: '#6c757d', borderColor: '#6c757d'}}
-                            >
-                                <i className="fas fa-times me-2"></i>Hủy
-                            </button>
-                            <button
-                                type="button"
-                                className="btn"
-                                onClick={handleSubmitReview}
-                                disabled={isSubmittingReview || (reviewData.serviceRating === 0 && reviewData.staffRating === 0)}
-                                style={{backgroundColor: '#e83e8c', color: 'white', borderColor: '#e83e8c'}}
-                            >
-                                {isSubmittingReview ? (
-                                    <>
-                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                        Đang gửi...
-                                    </>
-                                ) : (
-                                    <>
-                                        <i className="fas fa-paper-plane me-2"></i>Gửi đánh giá
-                                    </>
-                                )}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+                        )}
 
             {/* Cancel Appointment Modal - Simplified */}
             {showCancelModal && (
